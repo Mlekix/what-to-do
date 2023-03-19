@@ -21,35 +21,29 @@ let tasks = [
   },
 ];
 
+const listElement = (name) => {
+  return `  <div class="input-wrapper">
+              <input class="checkbox" type="checkbox">
+              <p class="description">${name}</p>
+            </div>
+            <button class="delete">X</button>
+          `;
+};
+
 const newTaskShowHandler = (tasks) => {
   tasks.forEach((task) => {
-    const li = document.createElement("li");
-    taskList.appendChild(li);
+    const newElement = document.createElement("li");
+    newElement.dataset.id = task.id;
+    newElement.innerHTML = listElement(task.name, task.id);
+    taskList.appendChild(newElement);
 
-    const div = document.createElement("div");
-    div.classList.add("input-wrapper");
-    li.appendChild(div);
-
-    const input = document.createElement("input");
-    input.classList.add("checkbox");
-    input.setAttribute("type", "checkbox");
-    div.appendChild(input);
-
-    const p = document.createElement("p");
-    p.classList.add("description");
-    p.textContent = task.name;
-    div.appendChild(p);
-
-    const btn = document.createElement("button");
-    btn.classList.add("delete");
-    btn.textContent = "X";
-    btn.addEventListener("click", () => {
+    const deleteBtn = newElement.querySelector(".delete");
+    deleteBtn.addEventListener("click", () => {
       const taskIndex = tasks.findIndex((t) => t.id === task.id);
       tasks.splice(taskIndex, 1);
-      li.remove();
+      newElement.remove();
       console.log(tasks);
     });
-    li.appendChild(btn);
   });
 };
 
@@ -64,9 +58,9 @@ const newItemBtnHandler = () => {
     const value = newInput.value;
     const isValueUnique = !tasks.some((task) => task.name === value);
 
-    if (e.keyCode === 13 && value !== "" && isValueUnique) {
+    if (e.key === "Enter" && value !== "" && isValueUnique) {
       tasks.push({
-        id: tasks[tasks.length - 1].id + 1,
+        id: tasks[tasks.length - 1]?.id + 1,
         checked: false,
         name: value,
       });
