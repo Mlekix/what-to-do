@@ -1,7 +1,11 @@
 import "../styles/index.scss";
 
 const newItemBtn = document.querySelector(".new-item-btn");
-const taskList = document.querySelector("ul");
+const taskList = document.querySelector(".new-tasks");
+const optionsBtn = document.querySelector(".options");
+const modalWindow = document.querySelector(".modal");
+const tasksDoneList = document.querySelector(".tasks-done");
+const closeModalBtn = document.querySelector(".close-modal");
 
 let tasks = [
   {
@@ -11,7 +15,7 @@ let tasks = [
   },
   {
     id: 1,
-    checked: false,
+    checked: true,
     name: "skończ stylowanie",
   },
   {
@@ -35,14 +39,34 @@ const newTaskShowHandler = (tasks) => {
     const newElement = document.createElement("li");
     newElement.dataset.id = task.id;
     newElement.innerHTML = listElement(task.name, task.id);
-    taskList.appendChild(newElement);
+
+    if (task.checked) {
+      tasksDoneList.appendChild(newElement);
+      newElement.querySelector(".checkbox").checked = true;
+    } else {
+      taskList.appendChild(newElement);
+    }
+
+    const checkbox = newElement.querySelector(".checkbox");
+    checkbox.checked = task.checked;
+    checkbox.addEventListener("change", () => {
+      const taskId = parseInt(newElement.dataset.id);
+      const taskIndex = tasks.findIndex((t) => t.id === taskId);
+      tasks[taskIndex].checked = checkbox.checked;
+      console.log(tasks);
+
+      if (checkbox.checked) {
+        tasksDoneList.appendChild(newElement);
+      } else {
+        taskList.appendChild(newElement);
+      }
+    });
 
     const deleteBtn = newElement.querySelector(".delete");
     deleteBtn.addEventListener("click", () => {
       const taskIndex = tasks.findIndex((t) => t.id === task.id);
       tasks.splice(taskIndex, 1);
       newElement.remove();
-      console.log(tasks);
     });
   });
 };
@@ -58,7 +82,7 @@ const newItemBtnHandler = () => {
     const value = newInput.value;
     const isValueUnique = !tasks.some((task) => task.name === value);
 
-    if (e.key === "Enter" && value !== "" && isValueUnique) {
+    if (e.key === "Enter" && value.trim() !== "" && isValueUnique) {
       tasks.push({
         id: tasks[tasks.length - 1]?.id + 1,
         checked: false,
@@ -73,6 +97,15 @@ const newItemBtnHandler = () => {
     }
   });
 };
+
+optionsBtn.addEventListener("click", () => {
+  modalWindow.style.display = "block";
+  console.log(tasks);
+
+  closeModalBtn.addEventListener("click", () => {
+    modalWindow.style.display = "none";
+  });
+});
 
 newItemBtn.addEventListener("click", newItemBtnHandler);
 newTaskShowHandler(tasks);

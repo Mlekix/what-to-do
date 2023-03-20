@@ -22,6 +22,50 @@ button {
   cursor: pointer;
 }
 
+.modal {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50vw;
+  height: 50vh;
+  background-color: $second-color;
+  border-radius: 30px;
+  transition: 0.2s;
+  .close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    color: $main-color;
+    cursor: pointer;
+    z-index: 2;
+    &:hover {
+      color: $delete-color;
+    }
+  }
+  h3 {
+    position: relative;
+    top: 12px;
+    left: 15px;
+    color: $main-color;
+  }
+  .tasks-done {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    top: 30px;
+    left: 15px;
+    .delete {
+      transform: translate(-20px);
+    }
+  }
+}
+
 input[type="checkbox"] {
   appearance: none;
   background-color: #fff;
@@ -36,7 +80,7 @@ input[type="checkbox"] {
   transition: 0.1s;
   cursor: pointer;
   &:checked {
-    background-color: grey;
+    background-color: $main-color;
     transform-origin: bottom left;
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
   }
@@ -71,6 +115,10 @@ input[type="checkbox"] {
       color: $second-color;
       font-size: 40px;
       margin: 15px 0px 15px 0;
+      transition: 0.1s;
+      &:hover {
+        color: $main-color;
+      }
     }
   }
   ul {
