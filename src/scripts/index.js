@@ -1,7 +1,11 @@
 import "../styles/index.scss";
 
 const newItemBtn = document.querySelector(".new-item-btn");
-const taskList = document.querySelector("ul");
+const taskList = document.querySelector(".new-tasks");
+const optionsBtn = document.querySelector(".options");
+const modalWindow = document.querySelector(".modal");
+const tasksDoneList = document.querySelector(".tasks-done");
+const closeModalBtn = document.querySelector(".close-modal");
 
 let tasks = [
   {
@@ -11,7 +15,7 @@ let tasks = [
   },
   {
     id: 1,
-    checked: false,
+    checked: true,
     name: "skończ stylowanie",
   },
   {
@@ -21,35 +25,49 @@ let tasks = [
   },
 ];
 
+const listElement = (name) => {
+  return `  <div class="input-wrapper">
+              <input class="checkbox" type="checkbox">
+              <p class="description">${name}</p>
+            </div>
+            <button class="delete">X</button>
+          `;
+};
+
 const newTaskShowHandler = (tasks) => {
   tasks.forEach((task) => {
-    const li = document.createElement("li");
-    taskList.appendChild(li);
+    const newElement = document.createElement("li");
+    newElement.dataset.id = task.id;
+    newElement.innerHTML = listElement(task.name, task.id);
 
-    const div = document.createElement("div");
-    div.classList.add("input-wrapper");
-    li.appendChild(div);
+    if (task.checked) {
+      tasksDoneList.appendChild(newElement);
+      newElement.querySelector(".checkbox").checked = true;
+    } else {
+      taskList.appendChild(newElement);
+    }
 
-    const input = document.createElement("input");
-    input.classList.add("checkbox");
-    input.setAttribute("type", "checkbox");
-    div.appendChild(input);
+    const checkbox = newElement.querySelector(".checkbox");
+    checkbox.checked = task.checked;
+    checkbox.addEventListener("change", () => {
+      const taskId = parseInt(newElement.dataset.id);
+      const taskIndex = tasks.findIndex((t) => t.id === taskId);
+      tasks[taskIndex].checked = checkbox.checked;
+      console.log(tasks);
 
-    const p = document.createElement("p");
-    p.classList.add("description");
-    p.textContent = task.name;
-    div.appendChild(p);
+      if (checkbox.checked) {
+        tasksDoneList.appendChild(newElement);
+      } else {
+        taskList.appendChild(newElement);
+      }
+    });
 
-    const btn = document.createElement("button");
-    btn.classList.add("delete");
-    btn.textContent = "X";
-    btn.addEventListener("click", () => {
+    const deleteBtn = newElement.querySelector(".delete");
+    deleteBtn.addEventListener("click", () => {
       const taskIndex = tasks.findIndex((t) => t.id === task.id);
       tasks.splice(taskIndex, 1);
-      li.remove();
-      console.log(tasks);
+      newElement.remove();
     });
-    li.appendChild(btn);
   });
 };
 
@@ -64,9 +82,9 @@ const newItemBtnHandler = () => {
     const value = newInput.value;
     const isValueUnique = !tasks.some((task) => task.name === value);
 
-    if (e.keyCode === 13 && value !== "" && isValueUnique) {
+    if (e.key === "Enter" && value.trim() !== "" && isValueUnique) {
       tasks.push({
-        id: tasks[tasks.length - 1].id + 1,
+        id: tasks[tasks.length - 1]?.id + 1,
         checked: false,
         name: value,
       });
@@ -79,6 +97,15 @@ const newItemBtnHandler = () => {
     }
   });
 };
+
+optionsBtn.addEventListener("click", () => {
+  modalWindow.style.display = "block";
+  console.log(tasks);
+
+  closeModalBtn.addEventListener("click", () => {
+    modalWindow.style.display = "none";
+  });
+});
 
 newItemBtn.addEventListener("click", newItemBtnHandler);
 newTaskShowHandler(tasks);
