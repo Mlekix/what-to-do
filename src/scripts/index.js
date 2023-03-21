@@ -34,6 +34,67 @@ const listElement = (name) => {
           `;
 };
 
+// const newTaskShowHandler = (tasks) => {
+//   tasks.forEach((task) => {
+//     const newElement = document.createElement("li");
+//     newElement.dataset.id = task.id;
+//     newElement.innerHTML = listElement(task.name, task.id);
+
+//     if (task.checked) {
+//       tasksDoneList.appendChild(newElement);
+//       newElement.querySelector(".checkbox").checked = true;
+//     } else {
+//       taskList.appendChild(newElement);
+//     }
+
+//     // const checkbox = newElement.querySelector(".checkbox");
+//     // checkbox.checked = task.checked;
+//     // checkbox.addEventListener("change", () => {
+//     //   const taskId = parseInt(newElement.dataset.id);
+//     //   const taskIndex = tasks.findIndex((t) => t.id === taskId);
+//     //   tasks[taskIndex].checked = checkbox.checked;
+
+//     //   if (checkbox.checked) {
+//     //     tasksDoneList.appendChild(newElement);
+//     //   } else {
+//     //     taskList.appendChild(newElement);
+//     //   }
+//     // });
+
+//     const deleteBtn = newElement.querySelector(".delete");
+//     deleteBtn.addEventListener("click", () => {
+//       const taskIndex = tasks.findIndex((t) => t.id === task.id);
+//       tasks.splice(taskIndex, 1);
+//       newElement.remove();
+//     });
+//   });
+// };
+
+const handleCheckboxChange = (tasks, newElement) => {
+  const checkbox = newElement.querySelector(".checkbox");
+  checkbox.checked = tasks.checked;
+  checkbox.addEventListener("change", () => {
+    const taskId = parseInt(newElement.dataset.id);
+    const taskIndex = tasks.findIndex((t) => t.id === taskId);
+    tasks[taskIndex].checked = checkbox.checked;
+
+    if (checkbox.checked) {
+      tasksDoneList.appendChild(newElement);
+    } else {
+      taskList.appendChild(newElement);
+    }
+  });
+};
+
+const deleteTaskHandler = (task, newElement) => {
+  const deleteBtn = newElement.querySelector(".delete");
+  deleteBtn.addEventListener("click", () => {
+    const taskIndex = tasks.findIndex((t) => t.id === task.id);
+    tasks.splice(taskIndex, 1);
+    newElement.remove();
+  });
+};
+
 const newTaskShowHandler = (tasks) => {
   tasks.forEach((task) => {
     const newElement = document.createElement("li");
@@ -47,27 +108,10 @@ const newTaskShowHandler = (tasks) => {
       taskList.appendChild(newElement);
     }
 
-    const checkbox = newElement.querySelector(".checkbox");
-    checkbox.checked = task.checked;
-    checkbox.addEventListener("change", () => {
-      const taskId = parseInt(newElement.dataset.id);
-      const taskIndex = tasks.findIndex((t) => t.id === taskId);
-      tasks[taskIndex].checked = checkbox.checked;
-      console.log(tasks);
+    handleCheckboxChange(tasks, newElement);
+    newElement.querySelector(".checkbox").checked = task.checked;
 
-      if (checkbox.checked) {
-        tasksDoneList.appendChild(newElement);
-      } else {
-        taskList.appendChild(newElement);
-      }
-    });
-
-    const deleteBtn = newElement.querySelector(".delete");
-    deleteBtn.addEventListener("click", () => {
-      const taskIndex = tasks.findIndex((t) => t.id === task.id);
-      tasks.splice(taskIndex, 1);
-      newElement.remove();
-    });
+    deleteTaskHandler(task, newElement);
   });
 };
 
@@ -100,7 +144,6 @@ const newItemBtnHandler = () => {
 
 optionsBtn.addEventListener("click", () => {
   modalWindow.style.display = "block";
-  console.log(tasks);
 
   closeModalBtn.addEventListener("click", () => {
     modalWindow.style.display = "none";
