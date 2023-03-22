@@ -7,21 +7,16 @@ const modalWindow = document.querySelector(".modal");
 const tasksDoneList = document.querySelector(".tasks-done");
 const closeModalBtn = document.querySelector(".close-modal");
 
-let tasks = [
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [
   {
     id: 0,
     checked: false,
-    name: "wypij 3 kawy i nie umrzyj",
+    name: "chill & enjoy this code",
   },
   {
     id: 1,
     checked: true,
-    name: "skończ stylowanie",
-  },
-  {
-    id: 2,
-    checked: false,
-    name: "dorzuć JS",
+    name: "you already done something?",
   },
 ];
 
@@ -34,52 +29,19 @@ const listElement = (name) => {
           `;
 };
 
-// const newTaskShowHandler = (tasks) => {
-//   tasks.forEach((task) => {
-//     const newElement = document.createElement("li");
-//     newElement.dataset.id = task.id;
-//     newElement.innerHTML = listElement(task.name, task.id);
-
-//     if (task.checked) {
-//       tasksDoneList.appendChild(newElement);
-//       newElement.querySelector(".checkbox").checked = true;
-//     } else {
-//       taskList.appendChild(newElement);
-//     }
-
-//     // const checkbox = newElement.querySelector(".checkbox");
-//     // checkbox.checked = task.checked;
-//     // checkbox.addEventListener("change", () => {
-//     //   const taskId = parseInt(newElement.dataset.id);
-//     //   const taskIndex = tasks.findIndex((t) => t.id === taskId);
-//     //   tasks[taskIndex].checked = checkbox.checked;
-
-//     //   if (checkbox.checked) {
-//     //     tasksDoneList.appendChild(newElement);
-//     //   } else {
-//     //     taskList.appendChild(newElement);
-//     //   }
-//     // });
-
-//     const deleteBtn = newElement.querySelector(".delete");
-//     deleteBtn.addEventListener("click", () => {
-//       const taskIndex = tasks.findIndex((t) => t.id === task.id);
-//       tasks.splice(taskIndex, 1);
-//       newElement.remove();
-//     });
-//   });
-// };
-
-const handleCheckboxChange = (tasks, newElement) => {
+const handleCheckboxChange = (task, newElement) => {
   const checkbox = newElement.querySelector(".checkbox");
-  checkbox.checked = tasks.checked;
+  const taskName = newElement.querySelector(".description");
+  checkbox.checked = task.checked;
   checkbox.addEventListener("change", () => {
-    const taskId = parseInt(newElement.dataset.id);
-    const taskIndex = tasks.findIndex((t) => t.id === taskId);
-    tasks[taskIndex].checked = checkbox.checked;
-
+    task.checked = checkbox.checked;
+    localStorage.setItem("tasks", JSON.stringify(tasks));
     if (checkbox.checked) {
-      tasksDoneList.appendChild(newElement);
+      taskName.style.textDecoration = "line-through";
+      setTimeout(() => {
+        taskName.style.textDecoration = "none";
+        tasksDoneList.appendChild(newElement);
+      }, 600);
     } else {
       taskList.appendChild(newElement);
     }
@@ -91,6 +53,7 @@ const deleteTaskHandler = (task, newElement) => {
   deleteBtn.addEventListener("click", () => {
     const taskIndex = tasks.findIndex((t) => t.id === task.id);
     tasks.splice(taskIndex, 1);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
     newElement.remove();
   });
 };
@@ -108,7 +71,7 @@ const newTaskShowHandler = (tasks) => {
       taskList.appendChild(newElement);
     }
 
-    handleCheckboxChange(tasks, newElement);
+    handleCheckboxChange(task, newElement);
     newElement.querySelector(".checkbox").checked = task.checked;
 
     deleteTaskHandler(task, newElement);
@@ -127,12 +90,14 @@ const newItemBtnHandler = () => {
     const isValueUnique = !tasks.some((task) => task.name === value);
 
     if (e.key === "Enter" && value.trim() !== "" && isValueUnique) {
-      tasks.push({
+      const newTask = {
         id: tasks[tasks.length - 1]?.id + 1,
         checked: false,
         name: value,
-      });
-      newTaskShowHandler([tasks[tasks.length - 1]]);
+      };
+      tasks.push(newTask);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      newTaskShowHandler([newTask]);
       newInput.parentNode.replaceChild(newItemBtn, newInput);
     } else if (!isValueUnique) {
       alert("do not enter same tasks");
