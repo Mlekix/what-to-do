@@ -83,6 +83,9 @@ input[type="checkbox"] {
   border-radius: 50px;
   transition: 0.1s;
   cursor: pointer;
+  &:hover {
+    border-color: $main-color;
+  }
   &:checked {
     background-color: $main-color;
     transform-origin: bottom left;
