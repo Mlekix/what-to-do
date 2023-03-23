@@ -1,4 +1,6 @@
 import "../styles/index.scss";
+import alertify from "alertifyjs";
+import "alertifyjs/build/css/alertify.min.css";
 
 const newItemBtn = document.querySelector(".new-item-btn");
 const taskList = document.querySelector(".new-tasks");
@@ -6,6 +8,8 @@ const optionsBtn = document.querySelector(".options");
 const modalWindow = document.querySelector(".modal");
 const tasksDoneList = document.querySelector(".tasks-done");
 const closeModalBtn = document.querySelector(".close-modal");
+
+alertify.set("notifier", "position", "top-center");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [
   {
@@ -42,6 +46,7 @@ const handleCheckboxChange = (task, newElement) => {
         taskName.style.textDecoration = "none";
         tasksDoneList.appendChild(newElement);
       }, 600);
+      alertify.notify("Great! Task completed", "success", 2);
     } else {
       taskList.appendChild(newElement);
     }
@@ -55,6 +60,7 @@ const deleteTaskHandler = (task, newElement) => {
     tasks.splice(taskIndex, 1);
     localStorage.setItem("tasks", JSON.stringify(tasks));
     newElement.remove();
+    alertify.notify("You delete this task", "error", 2);
   });
 };
 
@@ -84,6 +90,12 @@ const newItemBtnHandler = () => {
   newInput.type = "text";
   newInput.placeholder = "Enter new task";
   newItemBtn.parentNode.replaceChild(newInput, newItemBtn);
+  newInput.focus();
+
+  newInput.addEventListener("focusout", () => {
+    newInput.parentNode.replaceChild(newItemBtn, newInput);
+    return;
+  });
 
   newInput.addEventListener("keyup", (e) => {
     const value = newInput.value;
@@ -98,11 +110,12 @@ const newItemBtnHandler = () => {
       tasks.push(newTask);
       localStorage.setItem("tasks", JSON.stringify(tasks));
       newTaskShowHandler([newTask]);
+      alertify.notify("New task added", "success", 2);
       newInput.parentNode.replaceChild(newItemBtn, newInput);
     } else if (!isValueUnique) {
-      alert("do not enter same tasks");
+      alertify.notify("Do not enter the same tasks!", "warning", 2);
     } else if (value === "") {
-      alert("enter new task");
+      alertify.notify("Enter new task", "warning", 2);
     }
   });
 };
