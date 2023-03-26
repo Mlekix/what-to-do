@@ -177,9 +177,9 @@ input[type="checkbox"] {
   margin-right: 15px;
 }
 .new-item-input {
-  border: 1px solid $main-color;
+  border: none;
+  border-bottom: 1px solid $main-color;
   background-color: transparent;
-  border-radius: 5px;
   width: 250px;
   height: 30px;
   &:focus {
